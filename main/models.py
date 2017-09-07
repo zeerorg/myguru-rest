@@ -13,6 +13,8 @@ class Student(models.Model):
     email = models.EmailField(unique=True, db_index=True)
     profile_pic = models.ImageField(blank=False)
     study_year = models.SmallIntegerField(blank=False)
+    verified_phone = models.BooleanField(default=False)
+    verified_email = models.BooleanField(default=False)
 
 
 class Teacher(models.Model):
@@ -23,6 +25,8 @@ class Teacher(models.Model):
     profile_pic = models.ImageField(blank=False)
     about = models.TextField(blank=True)
     linked_in = models.CharField(blank=True)
+    verified_phone = models.BooleanField(default=False)
+    verified_email = models.BooleanField(default=False)
 
 
 # example : Thermodynamics, Physics, class 12
