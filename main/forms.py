@@ -9,7 +9,7 @@ class StudentForm(forms.Form):
     name = forms.CharField(label="Your Name")
     phone = forms.CharField(label="Phone Number", validators=[phone_regex])
     email = forms.EmailField(label="Email")
-    study_year = forms.ChoiceField(choices=(('11', 11),('12', 12)))
+    study_year = forms.IntegerField()
     profile_pic = forms.ImageField()
 
 
