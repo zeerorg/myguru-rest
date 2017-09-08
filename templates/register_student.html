@@ -16,7 +16,7 @@
         <h1 class="ui header">
             <div class="content">Student Register</div>
         </h1>
-        <form class="ui large form {% if form.name.errors or form.phone.errors or form.email.errors %}error{% endif %}" action="/register/student/" method="post" enctype="multipart/form-data">
+        <form class="ui large form {% if form.name.errors or form.phone.errors or form.email.errors or error %}error{% endif %}" action="/register/student/" method="post" enctype="multipart/form-data">
             <div class="ui raised segment">
                 {% csrf_token %}
                 {% comment %} {{ form.as_p }} {% endcomment %}
@@ -51,6 +51,24 @@
                                placeholder="Email">
                     </div>
                 </div>
+                <div class="field {% if error %} error {% endif %}">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               placeholder="Password">
+                    </div>
+                </div>
+                <div class="field {% if error %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password"
+                               id="password_confirm"
+                               name="password_confirm"
+                               placeholder="Password Confirm">
+                    </div>
+                </div>
                 <div class="ui error message">
                     {% for x in form.phone.errors %}
                         {% if forloop.first %}<div class="header">Phone Error</div>{% endif %}
@@ -64,6 +82,10 @@
                         {% if forloop.first %}<div class="header">Name Error</div>{% endif %}
                         <p>{{x}}</p>
                     {% endfor %}
+                    {% if error %}
+                        <div class="header">Password Error</div>
+                        <p>{{error}} </p>
+                    {% endif %}
                 </div>
                 <button class="ui button large" type="submit">Register</button>
             </div>
