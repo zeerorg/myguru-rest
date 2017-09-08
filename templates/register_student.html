@@ -13,6 +13,9 @@
         let img = document.getElementsByClassName("profile_image")[0];
         img.src = URL.createObjectURL(event.target.files[0]);
     }
+    {% if already_present %}
+        alert("The user is already present in our database");
+    {% endif %}
 </script>
 {% endblock extra_head %}
 {% block content %}
@@ -93,6 +96,7 @@
                   <option value="11">11</option>
                   <option value="12">12</option>
                 </select>
+                <br>
                 <div class="ui error message">
                     {% for x in form.phone.errors %}
                         {% if forloop.first %}<div class="header">Phone Error</div>{% endif %}

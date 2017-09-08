@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+import random
 
 phone_regex = RegexValidator(regex=r'^[1-9][0-9]{9}$',
                              message="Phone number must be entered in the format: '999999999'. Up to 15 digits allowed.")
@@ -15,6 +16,15 @@ class Student(models.Model):
     study_year = models.SmallIntegerField(blank=False)
     verified_phone = models.BooleanField(default=False)
     verified_email = models.BooleanField(default=False)
+
+    def __init__(self, *args, **kwargs):
+        if kwargs:
+            if "id" not in kwargs:
+                kwargs["id"] = random.randint(10000000, 99999999)
+                
+        super(Student, self).__init__(*args, **kwargs)
+
+
 
 
 class Teacher(models.Model):
