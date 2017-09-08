@@ -8,6 +8,12 @@
         background-color: #DADADA;
     }
 </style>
+<script>
+    let loadPic = (event) => {
+        let img = document.getElementsByClassName("profile_image")[0];
+        img.src = URL.createObjectURL(event.target.files[0]);
+    }
+</script>
 {% endblock extra_head %}
 {% block content %}
 <br>
@@ -21,6 +27,19 @@
                 {% csrf_token %}
                 {% comment %} {{ form.as_p }} {% endcomment %}
                 {{ form.non_field_errors }}
+                <div class="field {% if form.name.errors %}error{% endif %}">
+
+                    <img class="ui small circular image profile_image" src="https://www.materialui.co/materialIcons/social/person_black_216x216.png">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="file"
+                               id="{{form.profile_pic.auto_id}}"
+                               name="{{form.profile_pic.name}}"
+                               value="{% if form.profile_pic.data %}{{form.profile_pic.data}}{% endif %}"
+                               placeholder="Profile Pic"
+                               onchange="loadPic(event)">
+                    </div>
+                </div>
                 <div class="field {% if form.name.errors %}error{% endif %}">
                     <div class="ui left icon input">
                         <i class="user icon"></i>
@@ -69,6 +88,11 @@
                                placeholder="Password Confirm">
                     </div>
                 </div>
+                <select class="ui dropdown" id="{{form.study_year.auto_id}}" name="{{form.study_year.name}}">
+                  <option value="">Class</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
                 <div class="ui error message">
                     {% for x in form.phone.errors %}
                         {% if forloop.first %}<div class="header">Phone Error</div>{% endif %}

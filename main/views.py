@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 
 from main.forms import *
+from main.models import *
 
 
 # The first page view
@@ -23,12 +24,14 @@ def register_student(request):
             error = "Passwords do not match."
         print(request.POST['password'], error)
         if form.is_valid() and not error:
-
-            user = User.objects.create_user(form.cleaned_data['email'], form.cleaned_data['email'], request.POST['password'])
-            token = Token.objects.create(user=user)
-            print("registered")
-            return HttpResponse("Yo!! Cool! " + str(token.key))
+            #student = Student(form.cleaned_data)
+            #user = User.objects.create_user(form.cleaned_data['email'], form.cleaned_data['email'], request.POST['password'])
+            #token = Token.objects.create(user=user)
+            print("registered", form.cleaned_data)
+            return HttpResponse("Yo!! Cool! ")
         else:
+            print("is form valid", form.is_valid())
+            print(form.cleaned_data)
             pass
             #return Http404("Hello!! ??")
     if request.method == 'GET':

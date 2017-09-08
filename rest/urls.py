@@ -24,3 +24,5 @@ urlpatterns = [
     url(r'^register/student', main_views.register_student),
     url(r'^', main_views.main_page),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
