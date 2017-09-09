@@ -6,3 +6,4 @@ __pycache__
 !/static/css/
 !/static/js/
 media
+/test_dir/

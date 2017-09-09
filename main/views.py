@@ -13,19 +13,6 @@ def main_page(request):
     return render(request, 'index.html')
 
 
-def save_student(data):
-    try:
-        student = Student(**data)
-        student.save()
-        user = User.objects.create_user(data['email'], data['email'],
-                                        data['password'])
-        token = Token.objects.create(user=user)
-        print("registered", data)
-        return True
-    except IntegrityError:
-        return False
-
-
 # Student registration form.
 def register_student(request):
     form = None
@@ -50,3 +37,16 @@ def register_student(request):
     if request.method == 'GET':
         form = StudentForm()
     return render(request, 'register_student.html', {'form': form, 'error': error})
+
+
+def save_student(data):
+    try:
+        student = Student(**data)
+        student.save()
+        user = User.objects.create_user(data['email'], data['email'],
+                                        data['password'])
+        token = Token.objects.create(user=user)
+        print("registered", data)
+        return True
+    except IntegrityError:
+        return False
