@@ -36,6 +36,13 @@ class Teacher(models.Model):
     verified_phone = models.BooleanField(default=False)
     verified_email = models.BooleanField(default=False)
 
+    def __init__(self, *args, **kwargs):
+        if kwargs:
+            if "id" not in kwargs:
+                kwargs["id"] = random.randint(10000000, 99999999)
+
+        super(Teacher, self).__init__(*args, **kwargs)
+
 
 # example : Thermodynamics, Physics, class 12
 class Topic(models.Model):

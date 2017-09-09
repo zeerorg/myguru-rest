@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<style type="text/css">
+    .column {
+        max-width: 600px;
+    }
+    body {
+        background-color: #DADADA;
+    }
+</style>
+<script>
+    let loadPic = (event) => {
+        let img = document.getElementsByClassName("profile_image")[0];
+        img.src = URL.createObjectURL(event.target.files[0]);
+    }
+    {% if already_present %}
+        alert("The user is already present in our database");
+    {% endif %}
+</script>
+{% endblock extra_head %}
+{% block content %}
+<br>
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h1 class="ui header">
+            <div class="content">Teacher Register</div>
+        </h1>
+        <form class="ui large form {% if form.name.errors or form.phone.errors or form.email.errors or error %}error{% endif %}" action="/register/teacher/" method="post" enctype="multipart/form-data">
+            <div class="ui raised segment">
+                {% csrf_token %}
+                {% comment %} {{ form.as_p }} {% endcomment %}
+                {{ form.non_field_errors }}
+                <div class="field {% if form.name.errors %}error{% endif %}">
+
+                    <img class="ui small circular image profile_image" src="https://www.materialui.co/materialIcons/social/person_black_216x216.png">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="file"
+                               id="{{form.profile_pic.auto_id}}"
+                               name="{{form.profile_pic.name}}"
+                               value="{% if form.profile_pic.data %}{{form.profile_pic.data}}{% endif %}"
+                               placeholder="Profile Pic"
+                               onchange="loadPic(event)">
+                    </div>
+                </div>
+                <div class="field {% if form.name.errors %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="text"
+                               id="{{form.name.auto_id}}"
+                               name="{{form.name.name}}"
+                               value="{% if form.name.data %}{{form.name.data}}{% endif %}"
+                               placeholder="Name">
+                    </div>
+                </div>
+                <div class="field {% if form.phone.errors %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="tablet icon"></i>
+                        <input type="text"
+                               id="{{form.phone.auto_id}}"
+                               name="{{form.phone.name}}"
+                               value="{% if form.phone.data %}{{form.phone.data}}{% endif %}"
+                               placeholder="Phone">
+                    </div>
+                </div>
+                <div class="field {% if form.email.errors %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="mail icon"></i>
+                        <input type="text"
+                               id="{{form.email.auto_id}}"
+                               name="{{form.email.name}}"
+                               value="{% if form.email.data %}{{form.email.data}}{% endif %}"
+                               placeholder="Email">
+                    </div>
+                </div>
+                <div class="field {% if error %} error {% endif %}">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               placeholder="Password">
+                    </div>
+                </div>
+                <div class="field {% if error %}error{% endif %}">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password"
+                               id="password_confirm"
+                               name="password_confirm"
+                               placeholder="Password Confirm">
+                    </div>
+                </div>
+                <div class="field">
+                  <label>About</label>
+                  <textarea id="{{form.abut.auto_id}}"
+                            name="{{form.about.name}}"
+                            value="{% if form.about.data %}{{form.about.data}}{% endif %}"
+                            rows="2"></textarea>
+                </div>
+                <br>
+                <div class="ui error message">
+                    {% for x in form.phone.errors %}
+                        {% if forloop.first %}<div class="header">Phone Error</div>{% endif %}
+                        <p>{{x}}</p>
+                    {% endfor %}
+                    {% for x in form.email.errors %}
+                        {% if forloop.first %}<div class="header">Email Error</div>{% endif %}
+                        <p>{{x}}</p>
+                    {% endfor %}
+                    {% for x in form.name.errors %}
+                        {% if forloop.first %}<div class="header">Name Error</div>{% endif %}
+                        <p>{{x}}</p>
+                    {% endfor %}
+                    {% if error %}
+                        <div class="header">Password Error</div>
+                        <p>{{error}} </p>
+                    {% endif %}
+                </div>
+                <button class="ui button large" type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

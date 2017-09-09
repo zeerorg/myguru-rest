@@ -39,14 +39,53 @@ def register_student(request):
     return render(request, 'register_student.html', {'form': form, 'error': error})
 
 
+# Teacher registration form.
+def register_teacher(request):
+    form = None
+    error = None
+    if request.method == 'POST':
+        form = TeacherForm(request.POST, request.FILES)
+
+        if len(request.POST['password']) < 8:
+            error = "Password too short."
+        elif request.POST['password'] != request.POST['password_confirm']:
+            error = "Passwords do not match."
+
+        if form.is_valid() and not error:
+            data = form.cleaned_data
+            data['password'] = request.POST['password']
+
+            if save_teacher(data):
+                return HttpResponse("Yo!! Cool! ")
+            else:
+                return render(request, 'register_teacher.html', {'form': form, 'error': error, 'already_present': True})
+
+    if request.method == 'GET':
+        form = TeacherForm()
+    return render(request, 'register_teacher.html', {'form': form, 'error': error})
+
+
 def save_student(data):
     try:
+        password = data['password']
+        del(data['password'])
         student = Student(**data)
         student.save()
-        user = User.objects.create_user(data['email'], data['email'],
-                                        data['password'])
+        user = User.objects.create_user(data['email'], data['email'], password)
         token = Token.objects.create(user=user)
-        print("registered", data)
+        return True
+    except IntegrityError:
+        return False
+
+
+def save_teacher(data):
+    try:
+        password = data['password']
+        del(data['password'])
+        teacher = Teacher(**data)
+        teacher.save()
+        user = User.objects.create_user(data['email'], data['email'], password)
+        token = Token.objects.create(user=user)
         return True
     except IntegrityError:
         return False
