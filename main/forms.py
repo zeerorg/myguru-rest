@@ -15,7 +15,7 @@ class StudentForm(forms.Form):
 
 class TeacherForm(forms.Form):
     name = forms.CharField(label="Your Name")
-    phone = forms.CharField(label="Phone Number")
-    email = forms.CharField(label="Email")
+    phone = forms.CharField(label="Phone Number", validators=[phone_regex])
+    email = forms.EmailField(label="Email")
     profile_pic = forms.ImageField()
     about = forms.TextInput()
