@@ -25,8 +25,6 @@ class Student(models.Model):
         super(Student, self).__init__(*args, **kwargs)
 
 
-
-
 class Teacher(models.Model):
     id = models.IntegerField(blank=False, unique=True, primary_key=True, db_index=True)
     name = models.CharField(max_length=50, db_index=True, blank=False)
