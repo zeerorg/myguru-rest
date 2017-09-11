@@ -22,12 +22,16 @@ from main import views as main_views
 from rest import settings
 
 urlpatterns = [
-    url(r'^register/student', main_views.register_student),
-    url(r'^register/teacher', main_views.register_teacher),
     url(r'^api-token-auth/', auth_views.obtain_auth_token),
-    url(r'^admin/', admin.site.urls),
-    url(r'^', main_views.main_page),
-] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    url(r'^api/get_student/', main_views.get_student)
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    url(r'^register/student', main_views.register_student),
+    url(r'^register/teacher', main_views.register_teacher),
+    url(r'^admin/', admin.site.urls),
+    url(r'^', main_views.main_page),
+] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

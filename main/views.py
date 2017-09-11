@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
-from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, api_view, permission_classes, renderer_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
-from main.forms import *
-from main.models import *
+from main import forms, models, serializers
 
 
 # The first page view
@@ -14,11 +18,12 @@ def main_page(request):
 
 
 # Student registration form.
+@api_view(['GET', 'POST'])
 def register_student(request):
     form = None
     error = None
     if request.method == 'POST':
-        form = StudentForm(request.POST, request.FILES)
+        form = forms.StudentForm(request.POST, request.FILES)
 
         if len(request.POST['password']) < 8:
             error = "Password too short."
@@ -35,16 +40,17 @@ def register_student(request):
                 return render(request, 'register_student.html', {'form': form, 'error': error, 'already_present': True})
 
     if request.method == 'GET':
-        form = StudentForm()
+        form = forms.StudentForm()
     return render(request, 'register_student.html', {'form': form, 'error': error})
 
 
 # Teacher registration form.
+@api_view(['GET', 'POST'])
 def register_teacher(request):
     form = None
     error = None
     if request.method == 'POST':
-        form = TeacherForm(request.POST, request.FILES)
+        form = forms.TeacherForm(request.POST, request.FILES)
 
         if len(request.POST['password']) < 8:
             error = "Password too short."
@@ -61,15 +67,25 @@ def register_teacher(request):
                 return render(request, 'register_teacher.html', {'form': form, 'error': error, 'already_present': True})
 
     if request.method == 'GET':
-        form = TeacherForm()
+        form = forms.TeacherForm()
     return render(request, 'register_teacher.html', {'form': form, 'error': error})
+
+
+@api_view(["GET"])
+@authentication_classes((TokenAuthentication, ))
+@permission_classes((IsAuthenticated, ))
+@renderer_classes((JSONRenderer, ))
+def get_student(request):
+    student = models.Student.objects.get(email=request.user.email)
+    content = serializers.StudentSerializer(student)
+    return Response(content.data)
 
 
 def save_student(data):
     try:
         password = data['password']
         del(data['password'])
-        student = Student(**data)
+        student = models.Student(**data)
         student.save()
         user = User.objects.create_user(data['email'], data['email'], password)
         token = Token.objects.create(user=user)
@@ -82,7 +98,7 @@ def save_teacher(data):
     try:
         password = data['password']
         del(data['password'])
-        teacher = Teacher(**data)
+        teacher = models.Teacher(**data)
         teacher.save()
         user = User.objects.create_user(data['email'], data['email'], password)
         token = Token.objects.create(user=user)
