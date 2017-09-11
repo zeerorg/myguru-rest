@@ -107,6 +107,47 @@ class TestTeacherAuthToken(TestCase):
         self.assertEqual(response.data["token"], self.token.key)
 
 
+class TestTopic(TestCase):
+    def setUp(self):
+        with open(os.path.join(settings.BASE_DIR, "test_dir", "images.jpe"), 'rb') as content_file:
+            content = content_file.read()
+        self.teacher_data = {
+            "name": "Rishabh Gupta",
+            "phone": "9988776611",
+            "email": "randomail5@outlook.com",
+            "about": "I teach Physics",
+            "profile_pic": SimpleUploadedFile("yo.jpg", content, content_type="images/jpeg")
+        }
+        self.teacher = models.Teacher.objects.create(**self.teacher_data)
+        self.teacher.save()
+        self.teacher_data["password"] = "12345678"
+        self.user = User.objects.create_user(self.teacher_data['email'], self.teacher_data['email'], self.teacher_data["password"])
+        self.token = Token.objects.create(user=self.user)
+        self.factory = APIRequestFactory()
+
+        self.topic_data = {
+            "title": "Mechanics",
+            "subject": "Physics",
+            "year": "11",
+            "description": "Laws of motion and stuff"
+        }
+
+    def testTopicCreation(self):
+        request = self.factory.post("/api/topic/", self.topic_data, format="json", **{"Authorization": "Token " + str(self.token.key)})
+        request.user = self.user
+        response = views.add_topic(request)
+        print(response.data)
+        for x in response.data:
+            if x != "id" and x != "teacher_id" and x != "detail":
+                self.assertEqual(response.data[x], self.topic_data[x])
+
+        #self.assertEqual(response.data["teacher_id"], self.teacher["id"]) # TODO: NOT WORKING KEYERROR teacher_id
+
+        # Duplicate insertion
+        response = views.add_topic(request)
+        self.assertEqual(response.status_code, 409)
+
+
 
 
 

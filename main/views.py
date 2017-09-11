@@ -106,12 +106,15 @@ def get_teacher(request):
 def add_topic(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        serializer = serializers.TopicSerializer(data)
+        data["teacher_id"] = models.Teacher.objects.get(email=request.user.email).id
+        serializer = serializers.TopicSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-
-        pass
-    pass
+            topic = serializer.save()
+            response = Response(serializer.data)
+            print(response.data)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
 
 
 def save_student(data):

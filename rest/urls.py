@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^api-token-auth/', auth_views.obtain_auth_token),
     url(r'^api/get_student/', main_views.get_student),
     url(r'^api/get_teacher/', main_views.get_teacher),
+    url(r'^api/topic/', main_views.add_topic),
 ]
 
 if settings.DEBUG:
