@@ -23,7 +23,8 @@ from rest import settings
 
 urlpatterns = [
     url(r'^api-token-auth/', auth_views.obtain_auth_token),
-    url(r'^api/get_student/', main_views.get_student)
+    url(r'^api/get_student/', main_views.get_student),
+    url(r'^api/get_teacher/', main_views.get_teacher),
 ]
 
 if settings.DEBUG:
@@ -32,6 +33,6 @@ if settings.DEBUG:
 urlpatterns += [
     url(r'^register/student', main_views.register_student),
     url(r'^register/teacher', main_views.register_teacher),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin', admin.site.urls),
     url(r'^', main_views.main_page),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

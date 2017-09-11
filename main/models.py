@@ -53,6 +53,16 @@ class Topic(models.Model):
     teacher_id = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     description = models.TextField(blank=True)
 
+    def __init__(self, *args, **kwargs):
+        if kwargs:
+            if "id" not in kwargs:
+                kwargs["id"] = random.randint(10000000, 99999999)
+
+        teacher = Teacher.objects.get(id=kwargs["teacher_id"])
+        kwargs["teacher_id"] = teacher
+
+        super(Topic, self).__init__(*args, **kwargs)
+
     class Meta:
         unique_together = ("title", "subject", "year")
 

@@ -2,9 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, api_view, permission_classes, renderer_classes
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -76,9 +78,40 @@ def register_teacher(request):
 @permission_classes((IsAuthenticated, ))
 @renderer_classes((JSONRenderer, ))
 def get_student(request):
-    student = models.Student.objects.get(email=request.user.email)
-    content = serializers.StudentSerializer(student)
-    return Response(content.data)
+    student_query = models.Student.objects.filter(email=request.user.email)
+    if student_query.exists():
+        student = models.Student.objects.get(email=request.user.email)
+        content = serializers.StudentSerializer(student)
+        return Response(content.data)
+    return Response({"detail": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(["GET"])
+@authentication_classes((TokenAuthentication, ))
+@permission_classes((IsAuthenticated, ))
+@renderer_classes((JSONRenderer, ))
+def get_teacher(request):
+    teacher_query = models.Teacher.objects.filter(email=request.user.email)
+    if teacher_query.exists():
+        teacher = teacher_query.first()
+        content = serializers.TeacherSerializer(teacher)
+        return Response(content.data)
+    return Response({"detail": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(["POST"])
+@authentication_classes((TokenAuthentication, ))
+@permission_classes((IsAuthenticated, ))
+@renderer_classes((JSONRenderer, ))
+def add_topic(request):
+    if request.method == "POST":
+        data = JSONParser().parse(request)
+        serializer = serializers.TopicSerializer(data)
+        if serializer.is_valid():
+            serializer.save()
+
+        pass
+    pass
 
 
 def save_student(data):
