@@ -66,6 +66,14 @@ def get_student_helper(student_email):
     student_query = main_models.Student.objects.filter(email=student_email)
     if student_query.exists():
         student = student_query.first()
-        content = main_serializers.StudentSerializer(student)
+        content = main_serializers.StudentSerializer(student, many=False)
         return content.data, True
     return {"detail": "Invalid Token"}, False
+
+
+def get_all_topics():
+    topic_objects = main_models.Topic.objects.all()
+    topic_datas = []
+    for x in topic_objects:
+        topic_datas.append(main_serializers.TopicSerializer(x))
+    return topic_datas

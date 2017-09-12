@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, api_view, permission_classes, renderer_classes
@@ -74,11 +74,10 @@ def register_teacher(request):
 @api_view(["GET"])
 @authentication_classes((TokenAuthentication, ))
 @permission_classes((IsAuthenticated, ))
-@renderer_classes((JSONRenderer, ))
 def get_student(request):
     data, code = get_student_helper(request.user.email)
     if code:
-        return Response(data)
+        return JsonResponse(data)
     return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -93,11 +92,13 @@ def get_teacher(request):
     return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(["POST"])
+@api_view(["GET", "POST"])
 @authentication_classes((TokenAuthentication, ))
 @permission_classes((IsAuthenticated, ))
 @renderer_classes((JSONRenderer, ))
 def add_topic(request):
+    if request.method == "GET":
+        return get_topic(request)
     if request.method == "POST":
         data = JSONParser().parse(request)
         data, code = save_topic_helper(data, request.user.email)
@@ -105,3 +106,9 @@ def add_topic(request):
             return Response(data)
         else:
             return Response(data, status=status.HTTP_409_CONFLICT)
+
+
+def get_topic(request):
+    data = get_all_topics()
+    return Response(data)
+    pass
