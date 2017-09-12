@@ -9,7 +9,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 import clear_test_data
 from main import views
 from main import models
-from main.helpers.test_helper import *
+from main.helpers.test_helpers import *
 
 
 class StudentSaveTest(TestCase):

@@ -34,7 +34,7 @@ def register_student(request):
             data = form.cleaned_data
             data['password'] = request.POST['password']
 
-            if save_student(data):
+            if save_student_helper(data):
                 return HttpResponse("Yo!! Cool! ")
             else:
                 return render(request, 'register_student.html', {'form': form, 'error': error, 'already_present': True})
@@ -61,7 +61,7 @@ def register_teacher(request):
             data = form.cleaned_data
             data['password'] = request.POST['password']
 
-            if save_teacher(data):
+            if save_teacher_helper(data):
                 return HttpResponse("Yo!! Cool! ")
             else:
                 return render(request, 'register_teacher.html', {'form': form, 'error': error, 'already_present': True})
@@ -76,7 +76,7 @@ def register_teacher(request):
 @permission_classes((IsAuthenticated, ))
 @renderer_classes((JSONRenderer, ))
 def get_student(request):
-    data, code = get_student(request.user.email)
+    data, code = get_student_helper(request.user.email)
     if code:
         return Response(data)
     return Response(data, status=status.HTTP_401_UNAUTHORIZED)
@@ -87,7 +87,7 @@ def get_student(request):
 @permission_classes((IsAuthenticated, ))
 @renderer_classes((JSONRenderer, ))
 def get_teacher(request):
-    data, code = get_teacher(request.user.email)
+    data, code = get_teacher_helper(request.user.email)
     if code:
         return Response(data)
     return Response(data, status=status.HTTP_401_UNAUTHORIZED)
@@ -100,7 +100,7 @@ def get_teacher(request):
 def add_topic(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        data, code = save_topic(data, request.user.email)
+        data, code = save_topic_helper(data, request.user.email)
         if code:
             return Response(data)
         else:

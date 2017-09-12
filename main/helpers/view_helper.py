@@ -2,7 +2,7 @@ from main import models as main_models
 from main import serializers as main_serializers
 
 
-def save_student(data):
+def save_student_helper(data):
     """
     Creates a new student, inserts it in Student model, creates User and Token for it
     :param data: contains: "name", "phone", "email", "study_year", "profile_pic", "password"
@@ -21,7 +21,7 @@ def save_student(data):
         return False
 
 
-def save_teacher(data):
+def save_teacher_helper(data):
     """
     Creates a new teacher, inserts it in Teacher model, creates User and Token for it
     :param data: contains: "name", "phone", "email", "profile_pic", "password", "about"
@@ -40,7 +40,7 @@ def save_teacher(data):
         return False
 
 
-def save_topic(data, teacher_mail):
+def save_topic_helper(data, teacher_mail):
     teacher_query = main_models.Teacher.objects.filter(email=teacher_mail)
     if not teacher_query.exists():
         return {"detail": "Not Authenticated to create topic."}, False
@@ -53,7 +53,7 @@ def save_topic(data, teacher_mail):
     return serializer.errors, False
 
 
-def get_teacher(teacher_email):
+def get_teacher_helper(teacher_email):
     teacher_query = main_models.Teacher.objects.filter(email=teacher_email)
     if teacher_query.exists():
         teacher = teacher_query.first()
@@ -62,7 +62,7 @@ def get_teacher(teacher_email):
     return {"detail": "Invalid Token"}, False
 
 
-def get_student(student_email):
+def get_student_helper(student_email):
     student_query = main_models.Student.objects.filter(email=student_email)
     if student_query.exists():
         student = student_query.first()
