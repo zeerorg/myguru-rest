@@ -75,5 +75,5 @@ def get_all_topics():
     topic_objects = main_models.Topic.objects.all()
     topic_datas = []
     for x in topic_objects:
-        topic_datas.append(main_serializers.TopicSerializer(x))
+        topic_datas.append(main_serializers.TopicSerializer(x).data)
     return topic_datas

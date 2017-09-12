@@ -74,10 +74,11 @@ def register_teacher(request):
 @api_view(["GET"])
 @authentication_classes((TokenAuthentication, ))
 @permission_classes((IsAuthenticated, ))
+@renderer_classes((JSONRenderer, ))
 def get_student(request):
     data, code = get_student_helper(request.user.email)
     if code:
-        return JsonResponse(data)
+        return Response(data)
     return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 

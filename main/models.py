@@ -12,6 +12,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.db.utils import IntegrityError
+from django.forms.models import model_to_dict
 
 phone_regex = RegexValidator(regex=r'^[1-9][0-9]{9}$',
                              message="Phone number must be entered in the format: '999999999'. Up to 15 digits allowed.")
@@ -61,16 +62,13 @@ class Topic(models.Model):
     title = models.CharField(max_length=100, blank=False)
     subject = models.CharField(max_length=50, blank=False)
     year = models.SmallIntegerField(blank=False)
-    teacher_id = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    teacher_id = models.IntegerField(blank=False)
     description = models.TextField(blank=True)
 
     def __init__(self, *args, **kwargs):
         if kwargs:
             if "id" not in kwargs:
                 kwargs["id"] = random.randint(10000000, 99999999)
-
-        teacher = Teacher.objects.get(id=kwargs["teacher_id"])
-        kwargs["teacher_id"] = teacher
 
         super(Topic, self).__init__(*args, **kwargs)
 
