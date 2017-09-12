@@ -1,9 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
-from django.contrib.auth.models import User
-from django.db.utils import IntegrityError
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, api_view, permission_classes, renderer_classes
 from rest_framework.parsers import JSONParser
@@ -11,7 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
-from main import forms, models, serializers
+from main import forms
+from main.helpers.view_helper import *
 
 
 # The first page view
@@ -78,12 +76,10 @@ def register_teacher(request):
 @permission_classes((IsAuthenticated, ))
 @renderer_classes((JSONRenderer, ))
 def get_student(request):
-    student_query = models.Student.objects.filter(email=request.user.email)
-    if student_query.exists():
-        student = models.Student.objects.get(email=request.user.email)
-        content = serializers.StudentSerializer(student)
-        return Response(content.data)
-    return Response({"detail": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+    data, code = get_student(request.user.email)
+    if code:
+        return Response(data)
+    return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["GET"])
@@ -91,12 +87,10 @@ def get_student(request):
 @permission_classes((IsAuthenticated, ))
 @renderer_classes((JSONRenderer, ))
 def get_teacher(request):
-    teacher_query = models.Teacher.objects.filter(email=request.user.email)
-    if teacher_query.exists():
-        teacher = teacher_query.first()
-        content = serializers.TeacherSerializer(teacher)
-        return Response(content.data)
-    return Response({"detail": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+    data, code = get_teacher(request.user.email)
+    if code:
+        return Response(data)
+    return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])
@@ -106,38 +100,8 @@ def get_teacher(request):
 def add_topic(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        data["teacher_id"] = models.Teacher.objects.get(email=request.user.email).id
-        serializer = serializers.TopicSerializer(data=data)
-        if serializer.is_valid():
-            topic = serializer.save()
-            response = Response(serializer.data)
-            print(response.data)
-            return Response(serializer.data)
+        data, code = save_topic(data, request.user.email)
+        if code:
+            return Response(data)
         else:
-            return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
-
-
-def save_student(data):
-    try:
-        password = data['password']
-        del(data['password'])
-        student = models.Student(**data)
-        student.save()
-        user = User.objects.create_user(data['email'], data['email'], password)
-        token = Token.objects.create(user=user)
-        return True
-    except IntegrityError:
-        return False
-
-
-def save_teacher(data):
-    try:
-        password = data['password']
-        del(data['password'])
-        teacher = models.Teacher(**data)
-        teacher.save()
-        user = User.objects.create_user(data['email'], data['email'], password)
-        token = Token.objects.create(user=user)
-        return True
-    except IntegrityError:
-        return False
+            return Response(data, status=status.HTTP_409_CONFLICT)

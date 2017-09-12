@@ -1,6 +1,17 @@
+import random
+
 from django.db import models
 from django.core.validators import RegexValidator
-import random
+
+"""
+    All the django model related classes are imported here
+    hence other files communicate with django models through this module.
+
+    For example, you'll do `from main import models` instead of `from django.contrib.auth import models`
+"""
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from django.db.utils import IntegrityError
 
 phone_regex = RegexValidator(regex=r'^[1-9][0-9]{9}$',
                              message="Phone number must be entered in the format: '999999999'. Up to 15 digits allowed.")
