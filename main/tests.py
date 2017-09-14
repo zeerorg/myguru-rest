@@ -63,7 +63,7 @@ class TestStudentRequest(TestCase):
     def testGet(self):
         request = self.factory.get("/api/get_student")
         force_authenticate(request, user=self.user, token=self.token)
-        response = views.get_student(request)
+        response = views.StudentView.as_view()(request)
         self.assertEqual(int(response.data["id"]), self.student.id)
 
     def tearDown(self):
@@ -89,7 +89,7 @@ class TestTeacherAuthToken(TestCase):
     def testGet(self):
         request = self.factory.get("/api/get_teacher")
         force_authenticate(request, user=self.user, token=self.token)
-        response = views.get_teacher(request)
+        response = views.TeacherView.as_view()(request)
         self.assertEqual(int(response.data["id"]), self.teacher.id)
 
     def tearDown(self):
@@ -112,7 +112,7 @@ class TestTopic(TestCase):
     def testTopicCreation(self):
         request = self.factory.post("/api/topic/", self.topic_data, format="json")
         force_authenticate(request, user=self.user, token=self.user.auth_token)
-        response = views.add_topic(request)
+        response = views.TopicView.as_view()(request)
         for x in response.data:
             if x != "id" and x != "teacher_id" and x != "detail":
                 self.assertEqual(str(response.data[x]), self.topic_data[x])
@@ -120,7 +120,7 @@ class TestTopic(TestCase):
         # Duplicate insertion
         request = self.factory.post("/api/topic/", self.topic_data, format="json")
         force_authenticate(request, user=self.user, token=self.user.auth_token)
-        response = views.add_topic(request)
+        response = views.TopicView.as_view()(request)
         self.assertEqual(response.status_code, 409)
 
     def testTopicRetrieval(self):
@@ -128,7 +128,7 @@ class TestTopic(TestCase):
 
         request = self.factory.get("/api/topic")
         force_authenticate(request, user=self.user, token=self.user.auth_token)
-        response = views.add_topic(request)
+        response = views.TopicView.as_view()(request)
         all_ids = models.Topic.objects.all()
         all_ids_set = set()
         for x in all_ids:

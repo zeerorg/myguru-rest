@@ -7,6 +7,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.views import APIView
 
 from main import forms
 from main.helpers.view_helper import *
@@ -71,45 +72,43 @@ def register_teacher(request):
     return render(request, 'register_teacher.html', {'form': form, 'error': error})
 
 
-@api_view(["GET"])
-@authentication_classes((TokenAuthentication, ))
-@permission_classes((IsAuthenticated, ))
-@renderer_classes((JSONRenderer, ))
-def get_student(request):
-    data, code = get_student_helper(request.user.email)
-    if code:
+class StudentView(APIView):
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    renderer_classes = (JSONRenderer, )
+
+    def get(self, request, format=None):
+        data, code = get_student_helper(request.user.email)
+        if code:
+            return Response(data)
+        return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class TeacherView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request):
+        data, code = get_teacher_helper(request.user.email)
+        if code:
+            return Response(data)
+        return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class TopicView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        data = get_all_topics()
         return Response(data)
-    return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
-
-@api_view(["GET"])
-@authentication_classes((TokenAuthentication, ))
-@permission_classes((IsAuthenticated, ))
-@renderer_classes((JSONRenderer, ))
-def get_teacher(request):
-    data, code = get_teacher_helper(request.user.email)
-    if code:
-        return Response(data)
-    return Response(data, status=status.HTTP_401_UNAUTHORIZED)
-
-
-@api_view(["GET", "POST"])
-@authentication_classes((TokenAuthentication, ))
-@permission_classes((IsAuthenticated, ))
-@renderer_classes((JSONRenderer, ))
-def add_topic(request):
-    if request.method == "GET":
-        return get_topic(request)
-    if request.method == "POST":
+    def post(self, request, *args, **kwargs):
         data = JSONParser().parse(request)
         data, code = save_topic_helper(data, request.user.email)
         if code:
             return Response(data)
         else:
             return Response(data, status=status.HTTP_409_CONFLICT)
-
-
-def get_topic(request):
-    data = get_all_topics()
-    return Response(data)
-    pass
