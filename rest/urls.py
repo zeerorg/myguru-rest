@@ -8,8 +8,8 @@ from rest import settings
 
 urlpatterns = [
     url(r'^api-token-auth/', auth_views.obtain_auth_token),
-    url(r'^api/get_student/', main_views.StudentView.as_view),
-    url(r'^api/get_teacher/', main_views.TeacherView.as_view),
+    url(r'^api/get_student/', main_views.StudentView.as_view()),
+    url(r'^api/get_teacher/', main_views.TeacherView.as_view()),
     url(r'^api/topic/', main_views.TopicView.as_view),
 ]
 

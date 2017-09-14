@@ -20,6 +20,9 @@ phone_regex = RegexValidator(regex=r'^[1-9][0-9]{9}$',
 
 # Create your models here
 class Student(models.Model):
+    """
+
+    """
     id = models.IntegerField(blank=False, unique=True, primary_key=True, db_index=True)
     name = models.CharField(max_length=50, db_index=True, blank=False)
     phone = models.CharField(validators=[phone_regex], max_length=10, unique=True, db_index=True)
@@ -33,11 +36,14 @@ class Student(models.Model):
         if kwargs:
             if "id" not in kwargs:
                 kwargs["id"] = random.randint(10000000, 99999999)
-                
+
         super(Student, self).__init__(*args, **kwargs)
 
 
 class Teacher(models.Model):
+    """
+
+    """
     id = models.IntegerField(blank=False, unique=True, primary_key=True, db_index=True)
     name = models.CharField(max_length=50, db_index=True, blank=False)
     phone = models.CharField(validators=[phone_regex], max_length=10, unique=True, db_index=True, blank=False)
