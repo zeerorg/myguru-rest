@@ -90,11 +90,12 @@ class StudentSubscription(models.Model):
         unique_together = ("student_id", "topic_id")
 
 
-# each class for a single topic
 class TopicClass(models.Model):
-    topic = models.ForeignKey(Topic, db_index=True)
+    """
+    Each class for a single topic.
+    """
+    topic_id = models.IntegerField(unique=True, db_index=True, blank=False)
     end_time = models.TimeField(blank=False)
     start_time = models.TimeField(blank=False)
     date = models.DateField(blank=False)
     description = models.TextField(blank=False)
-

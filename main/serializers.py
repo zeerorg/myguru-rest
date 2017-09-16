@@ -59,3 +59,17 @@ class TopicSerializer(serializers.Serializer):
     def create(self, validated_data):
         teacher = models.Topic.objects.create(**validated_data)
         return validated_data
+
+
+class TopicClassSerializer(serializers.Serializer):
+    topic_id = serializers.IntegerField(read_only=True)
+    end_time = serializers.TimeField()
+    start_time = serializers.TimeField()
+    date = serializers.DateField()
+    description = serializers.CharField(allow_blank=False)
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass

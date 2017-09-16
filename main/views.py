@@ -13,14 +13,18 @@ from main import forms
 from main.helpers.view_helper import *
 
 
-# The first page view
 def main_page(request):
+    """
+    The first page
+    """
     return render(request, 'index.html')
 
 
-# Student registration form.
 @api_view(['GET', 'POST'])
 def register_student(request):
+    """
+    Student Registration Form
+    """
     form = None
     error = None
     if request.method == 'POST':
@@ -48,6 +52,9 @@ def register_student(request):
 # Teacher registration form.
 @api_view(['GET', 'POST'])
 def register_teacher(request):
+    """
+    Teacher Registration Form
+    """
     form = None
     error = None
     if request.method == 'POST':
