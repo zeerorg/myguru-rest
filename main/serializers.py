@@ -62,14 +62,33 @@ class TopicSerializer(serializers.Serializer):
 
 
 class TopicClassSerializer(serializers.Serializer):
+    """
+    Serializer for classes to be conducted under a topic
+    Note: time should be in "iso-8601" format
+    """
     topic_id = serializers.IntegerField(read_only=True)
     end_time = serializers.TimeField()
     start_time = serializers.TimeField()
     date = serializers.DateField()
     description = serializers.CharField(allow_blank=False)
 
+    def validate_topic_id(self, value):
+        if models.Topic.objects.filter(id=value).exists():
+            return value
+        raise serializers.ValidationError("Topic Id is not valid")
+
+    def validate(self, data):
+        if (data["end_time"].hour*60 + data["end_time"].minutes) - (data["start_time"].hour*60 + data["start_time"].minutes) < 60:
+            raise serializers.ValidationError("The class cannot be less than an hour long")
+        if data["end_time"] < data["start_time"]:
+            raise serializers.ValidationError("End time is before start time")
+        if models.TopicClass.objects.filter(topic_id=data["topic_id"], start_time__lte=data["start_time"], end_time__gte=data["end_time"]).exists():
+            raise serializers.ValidationError("Select different time for this class.")
+        return data
+
     def update(self, instance, validated_data):
         pass
 
     def create(self, validated_data):
-        pass
+        class_ = models.TopicClass.create(**validated_data)
+        return validated_data
