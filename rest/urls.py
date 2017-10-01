@@ -10,7 +10,8 @@ urlpatterns = [
     url(r'^api-token-auth/', auth_views.obtain_auth_token),
     url(r'^api/get_student/', main_views.StudentView.as_view()),
     url(r'^api/get_teacher/', main_views.TeacherView.as_view()),
-    url(r'^api/topic/', main_views.TopicView.as_view),
+    url(r'^api/topic/', main_views.TopicView.as_view()),
+    url(r'api/student/my_topics/', main_views.StudentTopics.as_view())
 ]
 
 if settings.DEBUG:
@@ -21,4 +22,4 @@ urlpatterns += [
     url(r'^register/teacher', main_views.TeacherRegisterView.as_view()),
     url(r'^admin', admin.site.urls),
     url(r'^', main_views.main_page),
-] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]

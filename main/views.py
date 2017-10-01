@@ -71,6 +71,7 @@ class StudentView(APIView):
         data, code = get_student_helper(request.user.email)
         if code:
             return Response(data)
+
         return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -83,6 +84,7 @@ class TeacherView(APIView):
         data, code = get_teacher_helper(request.user.email)
         if code:
             return Response(data)
+
         return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -100,5 +102,26 @@ class TopicView(APIView):
         data, code = save_topic_helper(data, request.user.email)
         if code:
             return Response(data)
-        else:
-            return Response(data, status=status.HTTP_409_CONFLICT)
+
+        return Response(data, status=status.HTTP_409_CONFLICT)
+
+
+class StudentTopic(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request):
+        data, code = get_student_topics(request.user.email)
+        if code:
+            return Response(data)
+
+        return Response(data, status=status.HTTP_409_CONFLICT)
+
+    def post(self, request):
+        data, code = post_student_topic(request.POST["topic_id"], request.user.email)
+        if code:
+            return Response(data)
+
+        return Response(data, status=status.HTTP_409_CONFLICT)
+
