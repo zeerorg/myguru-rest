@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404, JsonResponse
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import authentication_classes, api_view, permission_classes, renderer_classes
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -20,20 +19,14 @@ def main_page(request):
     return render(request, 'index.html')
 
 
-@api_view(['GET', 'POST'])
-def register_student(request):
-    """
-    Student Registration Form
-    """
-    form = None
-    error = None
-    if request.method == 'POST':
-        form = forms.StudentForm(request.POST, request.FILES)
+class StudentRegisterView(APIView):
 
-        if len(request.POST['password']) < 8:
-            error = "Password too short."
-        elif request.POST['password'] != request.POST['password_confirm']:
-            error = "Passwords do not match."
+    def get(self, request):
+        return render(request, 'register_student.html', {'form': forms.StudentForm(), 'error': None})
+
+    def post(self, request):
+        form = forms.StudentForm(request.POST, request.FILES)
+        error = check_password(request.POST["password"], request.POST["password_confirm"])
 
         if form.is_valid() and not error:
             data = form.cleaned_data
@@ -44,26 +37,18 @@ def register_student(request):
             else:
                 return render(request, 'register_student.html', {'form': form, 'error': error, 'already_present': True})
 
-    if request.method == 'GET':
-        form = forms.StudentForm()
-    return render(request, 'register_student.html', {'form': form, 'error': error})
+        return render(request, 'register_student.html', {'form': form, 'error': error})
 
 
-# Teacher registration form.
-@api_view(['GET', 'POST'])
-def register_teacher(request):
-    """
-    Teacher Registration Form
-    """
-    form = None
-    error = None
-    if request.method == 'POST':
+class TeacherRegisterView(APIView):
+
+    def get(self, request, format=None):
+        form = forms.TeacherForm()
+        return render(request, 'register_teacher.html', {'form': form, 'error': None})
+
+    def post(self, request, *args, **kwargs):
         form = forms.TeacherForm(request.POST, request.FILES)
-
-        if len(request.POST['password']) < 8:
-            error = "Password too short."
-        elif request.POST['password'] != request.POST['password_confirm']:
-            error = "Passwords do not match."
+        error = check_password(request.POST["password"], request.POST["password_confirm"])
 
         if form.is_valid() and not error:
             data = form.cleaned_data
@@ -74,9 +59,7 @@ def register_teacher(request):
             else:
                 return render(request, 'register_teacher.html', {'form': form, 'error': error, 'already_present': True})
 
-    if request.method == 'GET':
-        form = forms.TeacherForm()
-    return render(request, 'register_teacher.html', {'form': form, 'error': error})
+        return render(request, 'register_teacher.html', {'form': form, 'error': error})
 
 
 class StudentView(APIView):

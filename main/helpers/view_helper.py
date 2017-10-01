@@ -2,6 +2,20 @@ from main import models as main_models
 from main import serializers as main_serializers
 
 
+def check_password(password, confirm):
+    """
+    Check if password entered is correct
+    :param password:
+    :param confirm:
+    :return:
+    """
+    if len(password) < 8:
+        return "Password too short."
+    elif password != confirm:
+        return "Passwords do not match."
+    return None
+
+
 def save_student_helper(data):
     """
     Creates a new student, inserts it in Student model, creates User and Token for it
