@@ -10,7 +10,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 
 from main import forms
-from main.helpers.view_helper import *
+from helpers.view_helper import *
 
 
 def main_page(request):

@@ -6,7 +6,7 @@ from rest import settings
 
 
 def get_student_dict():
-    with open(os.path.join(settings.BASE_DIR, "test_dir", "images.jpe"), 'rb') as content_file:
+    with open(os.path.join(settings.BASE_DIR, "test_dir", "doge.jpg"), 'rb') as content_file:
         content = content_file.read()
     data = {
         "name": "Rishabh Gupta",
@@ -20,7 +20,7 @@ def get_student_dict():
 
 
 def get_teacher_dict():
-    with open(os.path.join(settings.BASE_DIR, "test_dir", "images.jpe"), 'rb') as content_file:
+    with open(os.path.join(settings.BASE_DIR, "test_dir", "doge.jpg"), 'rb') as content_file:
         content = content_file.read()
     data = {
         "name": "Rishabh Gupta",
