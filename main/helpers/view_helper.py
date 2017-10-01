@@ -1,6 +1,9 @@
 from main import models as main_models
 from main import serializers as main_serializers
 
+password_too_short = "Password too short."
+password_no_match = "Passwords do not match."
+
 
 def check_password(password, confirm):
     """
@@ -10,9 +13,9 @@ def check_password(password, confirm):
     :return:
     """
     if len(password) < 8:
-        return "Password too short."
+        return password_too_short
     elif password != confirm:
-        return "Passwords do not match."
+        return password_no_match
     return None
 
 

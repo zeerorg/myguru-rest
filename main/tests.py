@@ -6,6 +6,15 @@ import clear_test_data
 from main import views
 from main import models
 from main.helpers.test_helpers import *
+from main.helpers.view_helper import *
+
+
+class CommonTests(TestCase):
+
+    def testPassword(self):
+        self.assertEqual(check_password("helloxyzsg", "hel"), password_no_match)
+        self.assertEqual(check_password("helloxyzsg", "helloxyzsg"), None)
+        self.assertEqual(check_password("hel", "hel"), password_too_short)
 
 
 class StudentSaveTest(TestCase):
